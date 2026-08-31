@@ -1,0 +1,49 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.properties
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IDE - Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# IDE - VS Code
+.vscode/
+
+# Spring Boot
+spring-shell.log
+
+# ⚠️ IMPORTANT: Never commit real credentials!
+# Copy application.properties and fill in your real values locally.
+# application.properties is NOT ignored (it contains placeholder values only).
+# Create application-local.properties for your real secrets and add it here:
+application-local.properties
+application-secret.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# H2 Database files (if using file-based H2)
+*.db
+*.mv.db
+*.trace.db

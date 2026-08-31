@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Placement Monitoring & Assessment System</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <span class="logo-text">Skill<span class="highlight">Pulse</span> AI</span>
+                <span class="version-badge">v1.0</span>
+            </div>
+            
+            <nav class="nav-links">
+                <button class="nav-btn active" data-tab="student-tab"><i class="fa-solid fa-user-graduate"></i> Student Portal</button>
+                <button class="nav-btn" data-tab="dsa-tab"><i class="fa-solid fa-code"></i> DSA & Test Cases</button>
+                <button class="nav-btn" data-tab="recruiter-tab"><i class="fa-solid fa-briefcase"></i> Recruiter Portal</button>
+                <button class="nav-btn" data-tab="admin-tab"><i class="fa-solid fa-chart-line"></i> Placement Officer Dashboard</button>
+            </nav>
+
+            <div class="user-profile-controls">
+                <div class="active-user-pill">
+                    <span class="user-badge" id="nav-user-badge"><i class="fa-solid fa-user"></i> Student: Alex Mercer</span>
+                    <button class="btn btn-sm btn-outline" onclick="openAuthModal()"><i class="fa-solid fa-user-lock"></i> Accounts / Login</button>
+                </div>
+                <div class="api-status" id="nlp-status">
+                    <span class="pulse-dot green"></span> System Online
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- ==================== STUDENT PORTAL TAB ==================== -->
+        <section id="student-tab" class="tab-page active">
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <h1>AI Resume Analysis & Placement Matching</h1>
+                    <p>Powered by spaCy, NLTK, Spring Boot & Google Gemini API for personalized MCQ assessments.</p>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" onclick="loadSampleResumeText()"><i class="fa-solid fa-wand-magic-sparkles"></i> Load Demo Resume</button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Resume Upload & NLP Parser Card -->
+                <div class="card glass-card span-2">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-file-invoice"></i> Resume NLP Parser Engine</h2>
+                        <span class="badge blue">spaCy + NLTK Active</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="resume-text-input">Paste Resume Raw Text or Content:</label>
+                            <textarea id="resume-text-input" rows="6" placeholder="Paste resume text containing skills (Java, Spring Boot, Python, SQL...), education, and projects..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-accent" id="btn-parse-resume" onclick="handleParseResume()"><i class="fa-solid fa-microchip"></i> Parse Resume & Extract Skills</button>
+                        </div>
+
+                        <!-- Parsed Results Output Container -->
+                        <div id="parsed-resume-results" class="results-container hidden">
+                            <div class="candidate-summary">
+                                <div class="candidate-avatar"><i class="fa-solid fa-user-check"></i></div>
+                                <div>
+                                    <h3 id="res-name">Alex Mercer</h3>
+                                    <p id="res-email-phone">student@placement.com | +1 555-0199</p>
+                                    <p id="res-edu" class="text-subtle">B.Tech Computer Science (CGPA: 8.9)</p>
+                                </div>
+                            </div>
+                            <div class="skills-tag-cloud">
+                                <h4>Extracted Candidate Skills (<span id="res-skill-count">0</span>):</h4>
+                                <div id="res-skills-list" class="tag-group"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placement Readiness Card -->
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-award"></i> Readiness Score</h2>
+                    </div>
+                    <div class="card-body center-text">
+                        <div class="radial-progress-container">
+                            <div class="score-circle">
+                                <span id="readiness-score-num">88.5%</span>
+                                <span class="score-label">Placement Index</span>
+                            </div>
+                        </div>
+                        <div class="readiness-status-badge high" id="readiness-level-badge">High Employability</div>
+                        <p class="status-desc" id="readiness-desc">Candidate demonstrates strong backend engineering skills with Spring Boot and SQL.</p>
+                    </div>
+                </div>
+
+                <!-- Skill-Company Matching Leaderboard Card -->
+                <div class="card glass-card span-3">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-building-user"></i> Company Placement Drives & Skill Match Engine</h2>
+                        <button class="btn btn-outline" onclick="fetchCompanyMatches()"><i class="fa-solid fa-rotate-right"></i> Refresh Matches</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="company-matches-grid" class="drives-grid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== DSA PRACTICE & TEST CASE TAB ==================== -->
+        <section id="dsa-tab" class="tab-page">
+            <div class="page-title">
+                <h1>DSA Coding Interview Suite & Automated Test Case Evaluator</h1>
+                <p>Solve corporate coding problems, execute Java/Python solutions against test suites, and review test case pass rates.</p>
+            </div>
+
+            <div class="dashboard-grid dsa-grid">
+                <!-- DSA Problem Selection Sidebar -->
+                <div class="card glass-card span-1">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-code"></i> Interview Problems</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="filter-pills margin-bottom-sm">
+                            <button class="filter-btn active" onclick="filterDsaProblems('All', this)">All</button>
+                            <button class="filter-btn" onclick="filterDsaProblems('Easy', this)">Easy</button>
+                            <button class="filter-btn" onclick="filterDsaProblems('Medium', this)">Medium</button>
+                            <button class="filter-btn" onclick="filterDsaProblems('Hard', this)">Hard</button>
+                        </div>
+                        <div id="dsa-problem-list" class="dsa-problem-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DSA Workspace & Code Evaluator Card -->
+                <div class="card glass-card span-2">
+                    <div class="card-header dsa-header-flex">
+                        <div>
+                            <h2 id="dsa-active-title">Two Sum - Target Pair Indices</h2>
+                            <div class="dsa-meta-row">
+                                <span class="badge green" id="dsa-active-diff">Easy</span>
+                                <span class="text-subtle" id="dsa-active-constraints">Constraints: 2 &lt;= nums.length &lt;= 10^4</span>
+                            </div>
+                        </div>
+                        <div class="dsa-lang-selector">
+                            <label><i class="fa-solid fa-code-branch"></i> Language:</label>
+                            <select id="dsa-lang-select" onchange="handleDsaLanguageChange()">
+                                <option value="Java">Java (OpenJDK 17)</option>
+                                <option value="Python">Python 3.10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="problem-statement-box">
+                            <h4>Problem Description:</h4>
+                            <p id="dsa-active-desc">Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.</p>
+                            
+                            <div class="sample-io-grid">
+                                <div>
+                                    <strong>Sample Input:</strong>
+                                    <pre id="dsa-sample-input">nums = [2,7,11,15], target = 9</pre>
+                                </div>
+                                <div>
+                                    <strong>Expected Output:</strong>
+                                    <pre id="dsa-sample-output">[0, 1]</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Code Editor Container -->
+                        <div class="editor-container margin-top-md">
+                            <div class="editor-header">
+                                <span>Solution Code Editor</span>
+                                <button class="btn btn-sm btn-outline" onclick="resetDsaStarterCode()"><i class="fa-solid fa-rotate-left"></i> Reset Template</button>
+                            </div>
+                            <textarea id="dsa-code-editor" rows="12" spellcheck="false" placeholder="Write your Java/Python code here..."></textarea>
+                        </div>
+
+                        <div class="editor-actions margin-top-sm">
+                            <button class="btn btn-primary btn-lg" id="btn-submit-dsa" onclick="submitDsaSolution()">
+                                <i class="fa-solid fa-play"></i> Run & Test Code Against Test Cases
+                            </button>
+                        </div>
+
+                        <!-- Test Case Execution Verdict Output -->
+                        <div id="dsa-verdict-card" class="test-verdict-card hidden margin-top-md">
+                            <div class="verdict-header">
+                                <div>
+                                    <h3>Execution Verdict: <span id="verdict-status-text" class="verdict-status">Accepted</span></h3>
+                                    <p id="verdict-score-text" class="text-subtle">4 / 4 Test Cases Passed (100%)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="test-case-results-grid" id="test-case-results-grid">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== RECRUITER PORTAL TAB ==================== -->
+        <section id="recruiter-tab" class="tab-page">
+            <div class="page-title">
+                <h1>Recruiter Hiring & Candidate Evaluation Workflow</h1>
+                <p>Post placement drives, view AI skill-matched candidate rankings, and send assessment invites.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Create Placement Drive Form -->
+                <div class="card glass-card span-1">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-circle-plus"></i> Post New Placement Drive</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="create-drive-form" onsubmit="handleCreateDrive(event)">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" id="drive-company" required placeholder="e.g. Amazon / TechCorp">
+                            </div>
+                            <div class="form-group">
+                                <label>Job Role Title</label>
+                                <input type="text" id="drive-role" required placeholder="e.g. Senior Backend Engineer">
+                            </div>
+                            <div class="form-group">
+                                <label>Required Skills (Comma separated)</label>
+                                <input type="text" id="drive-skills" required placeholder="Java, Spring Boot, MySQL, REST API">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Package (LPA)</label>
+                                    <input type="number" step="0.5" id="drive-lpa" required placeholder="14.5">
+                                </div>
+                                <div class="form-group">
+                                    <label>Location</label>
+                                    <input type="text" id="drive-location" required placeholder="Bengaluru">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary full-width"><i class="fa-solid fa-paper-plane"></i> Publish Drive & Generate AI Test</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Candidate Matching & Evaluation Table -->
+                <div class="card glass-card span-2">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-users-viewfinder"></i> Candidate Skill Match Board & Test Tracking</h2>
+                        <div class="drive-select-wrapper">
+                            <label>Select Drive: </label>
+                            <select id="recruiter-drive-select" onchange="loadRecruiterCandidates()"></select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Candidate</th>
+                                        <th>Skills Match</th>
+                                        <th>Match Status</th>
+                                        <th>MCQ Score</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recruiter-candidates-tbody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ADMIN / TPO DASHBOARD TAB ==================== -->
+        <section id="admin-tab" class="tab-page">
+            <div class="page-title">
+                <h1>Training & Placement Officer (TPO) Monitoring Analytics</h1>
+                <p>Real-time candidate monitoring, assessment completion tracking, and skill gap analysis.</p>
+            </div>
+
+            <div class="stats-counter-grid">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon purple"><i class="fa-solid fa-user-graduate"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-total-students">0</h3>
+                        <p>Registered Candidates</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-building"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-total-drives">0</h3>
+                        <p>Active Hiring Drives</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-list-check"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-total-assessments">0</h3>
+                        <p>AI MCQ Tests Taken</p>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon orange"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-avg-score">0%</h3>
+                        <p>Average Score</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid margin-top-lg">
+                <div class="card glass-card span-2">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-fire"></i> Top In-Demand Technical Skills Heatmap</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="top-skills-heatmap" class="skills-heatmap">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card glass-card span-1">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-gears"></i> System Pipeline Status</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="pipeline-item">
+                            <div class="pipeline-label">Spring Boot REST API</div>
+                            <div class="pipeline-badge status-ok">Port 8080 Active</div>
+                        </div>
+                        <div class="pipeline-item">
+                            <div class="pipeline-label">Spring Security (JWT)</div>
+                            <div class="pipeline-badge status-ok">RBAC Enabled</div>
+                        </div>
+                        <div class="pipeline-item">
+                            <div class="pipeline-label">H2 Database</div>
+                            <div class="pipeline-badge status-ok">InMemory JPA Connected</div>
+                        </div>
+                        <div class="pipeline-item">
+                            <div class="pipeline-label">Python NLP Engine (spaCy/NLTK)</div>
+                            <div class="pipeline-badge status-ok">Port 5000 Active</div>
+                        </div>
+                        <div class="pipeline-item">
+                            <div class="pipeline-label">Google Gemini API</div>
+                            <div class="pipeline-badge status-ok">1.5 Flash AI Engine</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== UNIFIED ASSESSMENT MODAL (30 MCQs + DSA CHALLENGE) ==================== -->
+    <div id="assessment-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card width-lg">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modal-role-title">AI Comprehensive Technical Assessment (30 MCQs + DSA Coding Challenge)</h2>
+                    <p class="text-subtle" id="modal-skills-tag">Target Skills: Java, Spring Boot, SQL, DSA, Python</p>
+                </div>
+                <div class="quiz-timer"><i class="fa-solid fa-clock"></i> <span id="timer-display">35:00</span></div>
+            </div>
+
+            <!-- Section Switcher inside Modal -->
+            <div class="assessment-section-nav">
+                <button class="section-nav-btn active" id="btn-sec-mcq" onclick="switchAssessmentSection('mcq')">
+                    <i class="fa-solid fa-list-check"></i> Section 1: 30 Technical MCQs
+                </button>
+                <button class="section-nav-btn" id="btn-sec-dsa" onclick="switchAssessmentSection('dsa')">
+                    <i class="fa-solid fa-code"></i> Section 2: DSA Coding Problem & Test Cases
+                </button>
+            </div>
+            
+            <div class="modal-body scrollable-modal-body">
+                <!-- Section 1: 30 MCQs -->
+                <div id="assessment-section-mcq" class="assessment-section active">
+                    <div class="section-banner">
+                        <i class="fa-solid fa-circle-info"></i> Answer all 30 multiple choice questions below (1 point each).
+                    </div>
+                    <div id="quiz-container" class="mcq-questions-wrapper">
+                        <!-- 30 MCQ Questions injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Section 2: Integrated DSA Coding Challenge -->
+                <div id="assessment-section-dsa" class="assessment-section hidden">
+                    <div class="section-banner dsa">
+                        <i class="fa-solid fa-laptop-code"></i> Implement your solution code in Java or Python. Your code will be evaluated against automated test cases.
+                    </div>
+                    
+                    <div class="dsa-assessment-box margin-top-sm">
+                        <div class="dsa-header-flex">
+                            <h3 id="ass-dsa-title">Two Sum - Target Pair Indices</h3>
+                            <span class="badge green" id="ass-dsa-diff">Easy</span>
+                        </div>
+                        <p id="ass-dsa-desc" class="margin-top-xs">Given an array of integers nums and target, return indices of two numbers adding up to target.</p>
+                        
+                        <div class="sample-io-grid margin-top-xs">
+                            <div>
+                                <strong>Sample Input:</strong>
+                                <pre id="ass-dsa-input">nums = [2,7,11,15], target = 9</pre>
+                            </div>
+                            <div>
+                                <strong>Expected Output:</strong>
+                                <pre id="ass-dsa-output">[0, 1]</pre>
+                            </div>
+                        </div>
+
+                        <div class="editor-container margin-top-sm">
+                            <div class="editor-header">
+                                <div>
+                                    <label>Language: </label>
+                                    <select id="ass-dsa-lang-select" onchange="handleAssessmentDsaLangChange()">
+                                        <option value="Java">Java (OpenJDK 17)</option>
+                                        <option value="Python">Python 3.10</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-sm btn-outline" onclick="resetAssessmentDsaCode()"><i class="fa-solid fa-rotate-left"></i> Reset Template</button>
+                            </div>
+                            <textarea id="assessment-dsa-editor" rows="10" spellcheck="false" placeholder="Write your Java/Python DSA solution code here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeAssessmentModal()">Cancel Assessment</button>
+                <button class="btn btn-primary btn-lg" onclick="submitAssessmentAnswers()"><i class="fa-solid fa-paper-plane"></i> Submit Final Assessment (MCQs + DSA)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ASSESSMENT RESULT MODAL ==================== -->
+    <div id="result-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card width-md">
+            <div class="modal-header center-text">
+                <h2>Assessment Complete!</h2>
+                <p class="text-subtle">Unified Technical Assessment Evaluation Results</p>
+            </div>
+            <div class="modal-body">
+                <div class="score-summary-grid">
+                    <div class="score-box main">
+                        <span class="score-title">Overall Composite Score</span>
+                        <div class="score-circle margin-auto">
+                            <span id="res-score-pct">88.5%</span>
+                        </div>
+                        <h3 id="res-readiness-title" class="margin-top-xs text-green">High Employability</h3>
+                    </div>
+
+                    <div class="score-breakdown-card">
+                        <h4>Scoring Breakdown:</h4>
+                        <div class="breakdown-row">
+                            <span>Section 1 (30 Technical MCQs):</span>
+                            <strong id="res-mcq-score-text">24 / 30 (80%)</strong>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Section 2 (DSA Test Cases):</span>
+                            <strong id="res-dsa-score-text">4 / 4 Passed (100%)</strong>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>DSA Status:</span>
+                            <strong id="res-dsa-status-text" class="text-green">Accepted</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="res-ai-feedback" class="ai-feedback-box margin-top-md">
+                    Candidate exhibits strong core technical competence across domain skills.
+                </div>
+            </div>
+            <div class="modal-footer center-footer">
+                <button class="btn btn-primary btn-lg" onclick="closeResultModal()">Return to Portal Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== AUTH / LOGIN & REGISTER MODAL ==================== -->
+    <div id="auth-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card width-md">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-user-shield"></i> Accounts & Authentication</h2>
+                <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Auth Tabs -->
+                <div class="auth-tab-buttons">
+                    <button class="auth-tab-btn active" id="btn-tab-quick" onclick="switchAuthTab('quick')">Quick Demo Accounts</button>
+                    <button class="auth-tab-btn" id="btn-tab-login" onclick="switchAuthTab('login')">Account Login</button>
+                    <button class="auth-tab-btn" id="btn-tab-register" onclick="switchAuthTab('register')">Register New Account</button>
+                </div>
+
+                <!-- Auth Tab 1: Quick Accounts -->
+                <div id="auth-panel-quick" class="auth-panel active">
+                    <p class="text-subtle margin-bottom-sm">Select pre-configured accounts to switch profiles instantly:</p>
+                    <div class="preset-users-grid">
+                        <div class="preset-user-card" onclick="loginPresetUser('student', 'student123')">
+                            <div class="preset-icon student"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div>
+                                <strong>Alex Mercer</strong>
+                                <span class="role-tag student">Student (CS Dept)</span>
+                                <small>username: student</small>
+                            </div>
+                        </div>
+                        <div class="preset-user-card" onclick="loginPresetUser('priya_student', 'student123')">
+                            <div class="preset-icon student"><i class="fa-solid fa-brain"></i></div>
+                            <div>
+                                <strong>Priya Sharma</strong>
+                                <span class="role-tag student">Student (AI & ML)</span>
+                                <small>username: priya_student</small>
+                            </div>
+                        </div>
+                        <div class="preset-user-card" onclick="loginPresetUser('recruiter', 'recruiter123')">
+                            <div class="preset-icon recruiter"><i class="fa-solid fa-briefcase"></i></div>
+                            <div>
+                                <strong>TechCorp HR</strong>
+                                <span class="role-tag recruiter">Company Recruiter</span>
+                                <small>username: recruiter</small>
+                            </div>
+                        </div>
+                        <div class="preset-user-card" onclick="loginPresetUser('google_hr', 'company123')">
+                            <div class="preset-icon recruiter"><i class="fa-brands fa-google"></i></div>
+                            <div>
+                                <strong>Google Talent Team</strong>
+                                <span class="role-tag recruiter">Company Recruiter</span>
+                                <small>username: google_hr</small>
+                            </div>
+                        </div>
+                        <div class="preset-user-card" onclick="loginPresetUser('admin', 'admin123')">
+                            <div class="preset-icon admin"><i class="fa-solid fa-user-gear"></i></div>
+                            <div>
+                                <strong>Placement Officer</strong>
+                                <span class="role-tag admin">Admin / TPO</span>
+                                <small>username: admin</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auth Tab 2: Manual Login -->
+                <div id="auth-panel-login" class="auth-panel hidden">
+                    <form onsubmit="handleManualLogin(event)">
+                        <div class="form-group">
+                            <label>Username or Email</label>
+                            <input type="text" id="login-username" required placeholder="e.g. student or recruiter@techcorp.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="login-password" required placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width margin-top-sm"><i class="fa-solid fa-right-to-bracket"></i> Login to Account</button>
+                    </form>
+                </div>
+
+                <!-- Auth Tab 3: Create New Account -->
+                <div id="auth-panel-register" class="auth-panel hidden">
+                    <form onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label>Account Role Type</label>
+                            <div class="role-radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="regRole" value="STUDENT" checked onchange="toggleRegisterFields('STUDENT')">
+                                    <span>Student Candidate</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="regRole" value="RECRUITER" onchange="toggleRegisterFields('RECRUITER')">
+                                    <span>Company Recruiter</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="reg-fullname" required placeholder="e.g. John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" id="reg-username" required placeholder="e.g. johndoe">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="reg-email" required placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="reg-password" required placeholder="Choose a password">
+                            </div>
+                        </div>
+
+                        <!-- Role specific fields -->
+                        <div id="reg-company-group" class="form-group hidden">
+                            <label>Company / Organization Name</label>
+                            <input type="text" id="reg-company" placeholder="e.g. Meta / Microsoft">
+                        </div>
+
+                        <div id="reg-student-group" class="form-row">
+                            <div class="form-group">
+                                <label>Department / Stream</label>
+                                <input type="text" id="reg-dept" placeholder="Computer Science">
+                            </div>
+                            <div class="form-group">
+                                <label>CGPA / Percentage</label>
+                                <input type="number" step="0.1" id="reg-gpa" placeholder="8.5">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary full-width margin-top-sm"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
